@@ -1,4 +1,6 @@
 let display = '';
+let firstValue = null;
+let operation = null;
 
 // Basic math functions
 const add = function addTwoNumbers(x, y) {
@@ -23,6 +25,8 @@ const updateCalculatorDisplay = function updateCalculatorDisplay(newString = dis
 
 const clearUserInputs = function clearCurrentDisplaySavedOperationAndStoredDisplay() {
   display = '';
+  firstValue = null;
+  operation = null;
   updateCalculatorDisplay('');
 }
 
@@ -36,6 +40,7 @@ const insertDecimalPoint = function insertDecimalPoint() {
   updateCalculatorDisplay();
 }
 
+// TODO: cast parameters to 'number'
 const operate = function callCalculatorOperations(operator, x, y) {
   switch (operator) {
     case 'add':
@@ -57,19 +62,6 @@ const operate = function callCalculatorOperations(operator, x, y) {
 
 const decideOperation = function readButtonPressedAndDecideOperation(buttonPressed) {
   switch (buttonPressed) {
-    // For sum, need to save current value in display, save the operation and wait for another input
-    case '+':
-      break;
-
-    case '-':
-      break;
-
-    case '*':
-      break;
-      
-    case '/':
-      break;
-
     case 'ac':
       clearUserInputs();
       break;
@@ -83,9 +75,17 @@ const decideOperation = function readButtonPressedAndDecideOperation(buttonPress
       break;
     
     case '=':
+      const result = operate(operation, firstValue, display);
+      clearUserInputs();
+      display = `${result}`;
+      updateCalculatorDisplay();
       break;
 
     default:
+      firstValue = display;
+      operation = buttonPressed;
+      display = '';
+      updateCalculatorDisplay('');
       break;
   }
 }
