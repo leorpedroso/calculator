@@ -16,6 +16,7 @@ const multiply = function multiplyTwoNumbers(x, y) {
 }
 
 const divide = function divideTwoNumbers(x, y) {
+  if (y === 0) return 'ERROR!';
   return x / y;
 }
 
@@ -27,7 +28,6 @@ const clearUserInputs = function clearCurrentDisplaySavedOperationAndStoredDispl
   display = '';
   firstValue = null;
   operation = null;
-  updateCalculatorDisplay('');
 }
 
 const invertDisplayValue = function toggleDisplayValueBetweenNegativeAndPositive() {
@@ -40,23 +40,25 @@ const insertDecimalPoint = function insertDecimalPoint() {
   updateCalculatorDisplay();
 }
 
-// TODO: cast parameters to 'number'
 const operate = function callCalculatorOperations(operator, x, y) {
+  const xNumber = Number(x);
+  const yNumber = Number(y);
+
   switch (operator) {
     case 'add':
-      return add(x, y);
+      return add(xNumber, yNumber);
     
     case 'subtract':
-      return subtract(x, y);
+      return subtract(xNumber, yNumber);
 
     case 'multiply':
-      return multiply(x, y);
+      return multiply(xNumber, yNumber);
 
     case 'divide':
-      return divide(x, y);
+      return divide(xNumber, yNumber);
 
     default:
-      break;
+      return display;
   }
 }
 
@@ -64,6 +66,7 @@ const decideOperation = function readButtonPressedAndDecideOperation(buttonPress
   switch (buttonPressed) {
     case 'ac':
       clearUserInputs();
+      updateCalculatorDisplay();
       break;
 
     case '+/-':
@@ -75,23 +78,38 @@ const decideOperation = function readButtonPressedAndDecideOperation(buttonPress
       break;
     
     case '=':
-      const result = operate(operation, firstValue, display);
+      let result = operate(operation, firstValue, display);
+      result = Math.round(result * 10) / 10;
       clearUserInputs();
       display = `${result}`;
       updateCalculatorDisplay();
       break;
 
     default:
+
+      // if more than one operation is chained, then calculate the result of previous operation  
+      /* FIXME: bug when chaining multiple operators
+        * Example: 12 * + 5 =
+        * expected output: 17
+        * output: 5
+      */
+      if (operation !== null) {
+        let result = operate(operation, firstValue, display);
+        result = Math.round(result * 10) / 10;
+        display = `${result}`;
+      }
+     
       firstValue = display;
       operation = buttonPressed;
       display = '';
       updateCalculatorDisplay('');
+      
       break;
   }
 }
 
 const appendNumber = function appendNumberToDisplay(buttonPressed) {
-  if (display !== '' || buttonPressed !== "48") display += String.fromCharCode(buttonPressed); 
+  display += String.fromCharCode(buttonPressed); 
   updateCalculatorDisplay();
 }
 
