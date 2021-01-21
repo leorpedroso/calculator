@@ -1,5 +1,6 @@
 .inputDisplay {
   border: 2px dotted blue;
+  height: 20px;
 }
 
 .keys {
